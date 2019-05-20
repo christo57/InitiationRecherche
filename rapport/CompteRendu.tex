@@ -1,0 +1,860 @@
+\documentclass[11pt]{article}
+
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage[latin1]{inputenc} % package caracteres francais
+\usepackage[T1]{fontenc}      % package caracteres francais
+\usepackage[francais]{babel}  % package caracteres francais
+\usepackage{array}
+\usepackage{url}
+\usepackage{vmargin}
+\setmarginsrb{20mm}{20mm}{20mm}{20mm}{0mm}{0mm}{4mm}{8mm}
+\usepackage[backend=bibtex,style=verbose-trad2]{biblatex}
+
+
+\begin{document}
+
+
+%======Page de garde=======
+\begin{center}
+\includegraphics[width=10cm]{logoULFST.jpg} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+\begin{center}
+\thispagestyle{empty}
+{\bfseries \large Master Informatique}
+\end{center}
+
+\vspace*{70mm}
+\begin{center}
+	{\bfseries \Huge Rapport du projet d'initiation \`{a} la recherche}
+\end{center}
+\vspace*{10mm}
+\begin{center}
+{\large sujet : Constitution d'une base de cas de corrections du fran\c{c}ais}
+\end{center}
+\begin{center}
+{\large Ann\'ee 2018-2019}
+\end{center}
+
+
+
+\vspace*{60mm}
+\begin{multicols}{2}
+\begin{multicols}{2}
+	\begin{flushright}
+		\'{E}tudiants :
+	\end{flushright}
+		\vfill\null\columnbreak
+	\begin{flushleft}
+		Alex Ginestra\newline Christopher Klein
+	\end{flushleft}
+\end{multicols}
+\vfill\null\columnbreak
+\begin{multicols}{2}
+	\begin{flushright}
+		\'{E}quipes :
+	\end{flushright}
+	\begin{flushright}
+		Encadrants :
+	\end{flushright}
+	\vfill\null\columnbreak
+	\begin{flushleft}
+	K et S\'emagramme\newline Bruno Guillaume, Yves Lepage, Jean Lieber et Emmanuel Nauer
+	\end{flushleft}
+\end{multicols}
+\end{multicols}
+\cleardoublepage
+\cleardoublepage
+\newpage
+\strut
+\thispagestyle{empty}
+\newpage
+%=====Decharge de responsabilite=====
+\thispagestyle{empty}
+\begin{center}
+{\bfseries \huge D\'echarge de responsabilit\'e}
+\end{center}
+\vspace*{10mm}
+
+L'Universit\'{e} de Lorraine n'entend donner ni approbation ni improbation aux opinions \'{e}mises dans ce rapport, ces opinions devant \^{e}tre consid\'{e}r\'{e}es comme propres \`{a} leur auteur.
+\cleardoublepage
+
+
+%=====Page remerciements=====
+\thispagestyle{empty}
+\begin{center}
+{\bfseries \huge Remerciements}
+\end{center}
+\vspace*{10mm}
+
+Tout d'abord, nous tenons \`{a} remercier toute l'\'{e}quipe p\'{e}dagogique du d\'{e}partement informatique de la facult\'{e} des sciences et technologies pour les quatre ann\'{e}es de formation en Master informatique.
+\newline
+De plus, nous remercions toutes les personnes qui ont contribu\'{e} au bon d\'{e}roulement de notre travail et qui nous ont aid\'{e} lors de la r\'{e}daction de ce rapport. Premi\`{e}rement, nous adressons nos remerciements \`{a} notre professeur, Madame Marie-Laure Alves, qui nous a beaucoup aid\'{e}s. Son \'{e}coute et ses conseils nous ont permis de progresser dans notre d\'{e}marche.
+\newline
+Nous tenons \'{e}galement \`{a} remercier vivement notre encadrant, Monsieur Jean Lieber, enseignant chercheur au LORIA \autocite[1]{http://www.loria.fr/fr/}, pour son accueil, le temps pass\'{e} ensemble et le partage de son expertise au quotidien. Nous remercions \'{e}galement toute l'\'{e}quipe K et l'\'{e}quipe S\'{e}magramme pour leur accueil et leur disponibilit\'{e}, et en particulier Monsieur Emmanuel Nauer, qui nous a beaucoup aid\'{e} \`{a} comprendre les probl\'{e}matiques de recherche sur lesquelles nous travaillions. Enfin, nous tenons \`{a} remercier toutes les personnes qui nous ont conseill\'{e}s et relus lors de la r\'{e}daction de ce rapport : nos familles, nos professeurs et aussi nos camarades de cours.
+
+\cleardoublepage
+
+
+%======Sommaire====== 
+\thispagestyle{empty}
+\begin{center}
+{\bfseries \huge Sommaire}
+\end{center}
+\tableofcontents
+
+
+
+\cleardoublepage
+
+%=====Rappel du sujet====
+\thispagestyle{empty}
+
+\begin{center}
+{\bfseries \huge Rappel du sujet}
+\end{center}
+
+\vspace*{10mm}
+
+
+{\bfseries Probl\'ematique de recherche : }
+\newline
+\vspace*{2mm}
+
+Le raisonnement \`{a} partir de cas (R\`{a}PC) est un raisonnement hypoth\'etique (en g\'en\'eral) qui consiste \`{a} r\'esoudre un nouveau probl\`{e}me (le probl\`{e}me cible, not\'e cible) en s'appuyant sur une base de cas, un cas \'etant la repr\'esentation d'un \'episode de r\'esolution de probl\`{e}me. On appelle cas source un \'el\'ement de la base de cas. Souvent, on repr\'esente un cas source simplement par un couple (srce, sol(srce)) : srce est un probl\`{e}me source, sol(srce) est une solution de ce probl\`{e}me source. Un mod\`{e}le du processus de R\`{a}PC classique comprend deux \'etapes d'inf\'erence : 
+\newline
+Rem\'emoration : un cas source (srce, sol(srce)) jug\'e similaire au probl\`{e}me cible (par exemple, sur la base d'une distance entre probl\`{e}mes) est s\'electionn\'e. 
+\newline
+Adaptation : La solution sol(srce) de ce cas est modifi\'ee en une solution candidate sol(cible) de cible. 
+\newline
+La correction de phrases est la probl\'ematique de la transformation d'une phrase incorrecte (en particulier, grammaticalement) en une phrase corrig\'ee (nous choisirons la langue fran\c{c}aise dans ce travail, m\^eme si la probl\'ematique existe dans toutes les langues). Un cas de correction de phrase est donc un couple (srce, sol(srce)) o\`{u} srce est une phrase incorrecte et sol(srce) une correction de srce. Par exemple, on a les deux cas : 
+\newline
+srce1 = Tu as pas mang\'e. sol(srce1) = Tu n'as pas mang\'e. 
+\newline
+srce2 = Il a recommencer. sol(srce2) = Il a recommenc\'e. 
+\newline
+L'adaptation se fait par des techniques de raisonnement par analogie : la solution sol(cible) est solution d'une \'equation analogique << srce est \`{a} sol(srce) ce que cible est \`{a} y >>. Par exemple, l'adaptation de (srce2, sol(srce2)) \`{a} cible = Tu as manger. consiste \`{a} r\'esoudre Il a recommencer. est \`{a} Il a recommenc\'e. ce que Tu as manger. est \`{a} x qui a pour solution, avec la relation d'analogie utilis\'ee dans le projet, x = Tu as mang\'e., proposition de solution propos\'ee par le syst\`{e}me. 
+\newline
+\newline
+Sujet : 
+\newline
+Comme pour tout syst\`{e}me \`{a} base de connaissances, la qualit\'e d'un syst\`{e}me de R\`{a}PC d\'epend de celle de son moteur d'inf\'erences mais \'egalement de la qualit\'e de sa base de connaissances, en particulier de sa base de cas. Une bonne base de cas doit avoir plusieurs qualit\'es. Les cas sources doivent \^etre corrects. Elle doit avoir une bonne couverture (et permettre de r\'esoudre correctement une proportion importante de cas). Elle devrait ne pas \^etre trop redondante (certains cas diff\'erents correspondent \`{a} la m\^eme correction). 
+\newline
+Pour cela, on pourra consulter les mouchards d'\'edition de Wikip\'edia pour en extraire des listes de fautes grammaticales ou orthographiques typiques, ainsi que des sites de dict\'ees ou d'orthographe. Il faudra mettre en place les outils de collecte automatiques, param\'etrables en fonction des sites. 
+\newline
+Une autre piste est la mise en place d'un jeu interactif avec un but. Le but est de faire corriger des phrases fautives par les joueurs. La phrase corrig\'ee devrait \'emerger de la majorit\'e des propositions de correction. Les phrases fautives pourraient \^etre extraites de listes d'exemples fautifs, ou produites automatiquement \`{a} partir de patrons pr\'ed\'efinis ou par application de l'analogie sur des cas d\'ej\`{a} collect\'es.
+\newline
+Une courte \'etude bibliographique sur la maintenance de base de cas permettra de sugg\'erer des pistes pour l'acquisition d'une bonne base de cas. Il faudra mettre en place une m\'ethode pour cela, qui pourra s'appuyer sur les sites mentionn\'es ci-dessus.
+
+\cleardoublepage
+
+
+%===== Introduction ====
+\begin{center}
+{\bfseries \huge Introduction}
+\end{center}
+\setcounter{page}{5}
+
+\vspace*{35mm}
+
+
+Le TAL (traitement automatique des langues) est un domaine d'\'{e}tudes dont l'objectif est de cr\'{e}er des outils de traitement de la langue pour diverses applications. Il traite de nombreux sujets notamment dans le domaine de la compr\'{e}hension automatique des textes, la traduction automatique, ou encore la correction automatique des fautes orthographiques et grammaticales. C'est pourquoi linguistes et informaticiens collaborent \'{e}troitement sur l'\'{e}tude de la langue et le traitement automatique des donn\'{e}es. Le traitement automatique du langage couvre donc un vaste champ de disciplines de recherche et se trouve \`{a} l'origine de nombreux travaux. 
+\newline
+\newline
+Parmi les premiers travaux, qui remontent aux ann\'{e}es 50 pendant la guerre froide, se trouve la mise au point du premier traducteur automatique. Nomm\'{e} <<\,experience Georgetown-IBM\,>> et d\'{e}velopp\'{e} par l'universit\'{e} de Georgetown en collaboration avec la soci\'{e}t\'{e} IBM, le projet offrait la possibilit\'{e} de traduire du russe vers l'anglais. C'est en 1954 que la premi\`{e}re d\'{e}monstration sur une soixantaine de phrases s'est faite, une vraie prouesse technologique pour l'\'{e}poque. Depuis, le traitement automatique des langues a bien \'{e}volu\'{e} et est devenu un domaine pluridisciplinaire. Il peut allier la linguistique, l'informatique, et m\^{e}me se coupler \`{a} de l'intelligence artificielle pour cr\'{e}er des applications de plus en plus complexes nous permettant de simplifier nos t\^{a}ches quotidiennes. 
+\newline
+
+Un correcteur automatique de la langue est un exemple d'outil utilisant des domaines du traitement automatique des langues. Il utilise des disciplines de recherche vari\'{e}es telles que l'analyse syntaxique, la correction orthographique et d'autres plus sp\'{e}cifiques telles que la d\'{e}limitation de phrase ou la morphologie. Un outil tel que celui-ci est un monstre de conception et de d\'{e}veloppement, et les meilleurs correcteurs automatiques connus \`{a} ce jour ont \'{e}t\'{e} d\'{e}velopp\'{e}s par des entreprises internationales comme Microsoft, Google ou encore Apple. 
+\newline
+
+Contrairement aux cas d\'{e}crits pr\'{e}c\'{e}demment, notre sujet consiste \`{a} cr\'{e}er un syst\`{e}me permettant la correction automatique de phrases fran\c{c}aises en s'appuyant sur le raisonnement \`{a} partir de cas (R\`{a}PC). Pour r\'{e}pondre \`{a} cette probl\'{e}matique, nous allons tout d'abord introduire le raisonnement \`{a} partir de cas et expliquer comment il va nous permettre de corriger des phrases. Puis nous aborderons une partie plus pratique o\`{u} nous d\'{e}taillerons les diff\'{e}rentes \'{e}tapes permettant de r\'{e}soudre notre probl\'{e}matique. Nous parlerons ensuite des r\'{e}sultats obtenus suite \`{a} nos d\'{e}veloppements et finirons par introduire les suites possibles de notre projet.
+\newline
+
+\cleardoublepage
+
+
+%===== 1ere partie ====
+\section{Analyse du probl\`{e}me et organisation}
+
+%===== 1ere sous partie ====
+\subsection{Le raisonnement \`{a} partir de cas}
+Le raisonnement \`{a} partir de cas (not\'{e} R\`{a}PC) est un raisonnement qui consiste \`{a} r\'{e}soudre des probl\`{e}mes en s'appuyant sur des exp\'{e}riences similaires rencontr\'{e}es par le pass\'{e}. Gr\^{a}ce aux exp\'{e}riences pass\'{e}es d\'{e}j\`{a} r\'{e}solues, nous arrivons \`{a} en inf\'{e}rer une solution qui s'ajoute \`{a} notre exp\'{e}rience. La reproduction de cet exemple un grand nombre de fois nous permettra d'avoir une exp\'{e}rience telle que nous pouvons essayer d'inf\'{e}rer une solution \`{a} des
+probl\`{e}mes similaires.
+\newline
+\newline
+Il y a deux principales \'{e}tapes dans ce raisonnement. Premi\`{e}rement, il y a ce qu'on appellera la <<\,rem\'{e}moration\,>>, qui est le rapprochement entre notre probl\`{e}me actuel (que nous appellerons probl\`{e}me cible) et un probl\`{e}me qui a d\'{e}j\`{a} \'{e}t\'{e} r\'{e}solu dans le pass\'{e} (qu'on nommera probl\`{e}me source). La deuxi\`{e}me \'{e}tape s'appelle <<\,l'adaptation\,>>. Ce principe permet d'obtenir une solution de notre probl\`{e}me source en modifiant la solution du probl\`{e}me cible.
+\newline
+\newline
+%==== image ====
+\begin{center}
+\includegraphics[width=7cm]{img1.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Nous voyons donc qu'il est possible de r\'{e}soudre des probl\`{e}mes gr\^ace au raisonnement \`{a} partir de cas. N\'{e}anmoins, pour pouvoir les r\'{e}soudre, nous devons avoir des probl\`{e}mes similaires d\'{e}j\`{a} r\'{e}solus. Cet ensemble de couples (probl\`{e}me, solution) r\'{e}solu s'appelle une base de cas. En plus du couple (probl\`{e}me, solution), une explication est ajout\'{e}e et permet d'am\'{e}liorer l'\'{e}tape de la rem\'{e}moration.
+\newline
+\newline
+Voici un exemple de r\'{e}solution de probl\`{e}me gr\^ace au raisonnement \`{a} partir de cas : 
+Ici le probl\`{e}me que nous rencontrons est une phrase contenant une erreur de fran\c{c}ais (probl\`{e}me cible) : <<\,Tu n'as pas manger.\,>>.
+Nous avons dans notre base de cas un couple (phrase erron\'{e}e, phrase corrig\'{e}e) tel que celui-ci : (<<\,Il a recommencer.\,>>, <<\,Il a recommenc\'{e}.\,>>) o\`{u} la phrase erron\'{e}e est le probl\`{e}me source et la phrase corrig\'{e}e est la solution du probl\`{e}me source.
+La rem\'{e}moration va donc rapprocher notre probl\`{e}me cible du probl\`{e}me source et en utilisant la solution du probl\`{e}me source ainsi que l'explication, l'adaptation va pouvoir nous fournir une solution de notre probl\`{e}me cible qui sera <<\,Tu n'as pas mang\'{e}.\,>>.
+\newline
+\newline
+Pour parvenir \`{a} r\'{e}soudre notre probl\'{e}matique qui est la correction automatique du fran\c{c}ais \`{a} l'aide du raisonnement \`{a} partir du cas, il nous faut donc une base de cas qui permette en th\'{e}orie de corriger toutes les erreurs possibles du fran\c{c}ais. En prenant en compte tous les types d'erreurs possibles (grammaire, orthographe, conjugaison, etc.), il y aurait un nombre immense de cas \`{a} d\'{e}finir dans notre base, ce qui est impossible \`{a} construire \`{a} la main. Le but de notre projet est donc de construire une base de cas \`{a} l'aide d'outils divers et vari\'{e}s qui serait totalement automatis\'{e}e.
+\newline
+\newline
+Nous voyons donc qu'il est possible de r\'{e}soudre des probl\`{e}mes gr\^{a}ce au raisonnement \`{a} partir de cas. Cependant, pour pouvoir les r\'{e}soudre, il est n\'{e}cessaire d'avoir des probl\`{e}mes similaires d\'{e}j\`{a} r\'{e}solus. Cet ensemble de couples (probl\`{e}me, solution) r\'{e}solus s'appelle une base de cas. En plus du couple (probl\`{e}me, solution), une explication est ajout\'{e}e et permet d'am\'{e}liorer l'\'{e}tape de la rem\'{e}moration.
+\newline
+\newline
+
+%===== 2eme sous partie ====
+\subsection{Travail existant}
+
+Une premi\`{e}re piste nous a \'{e}t\'{e} fournie par un groupe d'\'{e}tudiants de L3 de 2017-2018 compos\'{e} de M. Giang, M. Levy et M. Ly, qui avait travaill\'{e} sur un projet intitul\'{e} Corrector. Le projet consistait \`{a} faire un site WEB capable d'apporter une correction \`{a} une phrase erron\'{e}e donn\'{e}e en entr\'{e}e. Cette correction devait se faire \`{a} l'aide d'une base de cas qui pouvait s'enrichir avec des interactions humaines (utilisateur/administrateur du site). 
+\newline
+\newline
+Notre d\'{e}but d'\'{e}tude a donc \'{e}t\'{e} guid\'{e} par les moyens mis en {\oe}uvre pour effectuer un remplissage automatique de leur base de cas initiale, et plus particuli\`{e}rement un : les corpus de WiCoPaCo \autocite[2]{https://wicopaco.limsi.fr}. Le site WiCoPaCo met en libre acc\`{e}s des fichiers au format XML contenant des phrases, ou parties de phrases avec une correction effectu\'{e}e ainsi qu'un commentaire \'{e}ventuel laiss\'{e} par l'auteur de la correction. Ces fichiers sont le r\'{e}sultat des corrections faites par les administrateurs des pages Wikip\'{e}dia, ce qui n\'{e}cessite une correction \'{e}tant donn\'{e} que le contenu des pages est apport\'{e} par des utilisateurs. Les fichiers en question contiennent donc des centaines de milliers de cas compos\'{e}s de la mani\`{e}re suivante : le groupe de phrases avant modification avec la mise en \'{e}vidence de la faute, suivi du m\^{e}me groupe de phrases avec la correction apport\'{e}e \'{e}galement mise en \'{e}vidence. 
+\newline
+\newline
+L'int\'{e}r\^{e}t principal de ces fichiers \'{e}tant l'\'{e}norme masse de donn\'{e}es qu'ils contiennent, nous permettant ainsi d'en extraire un grand nombre de cas. Cependant, m\^{e}me si cette solution semble \^{e}tre id\'{e}ale et simple \`{a} mettre en place, il s'av\`{e}re qu'elle est loin d'\^{e}tre parfaite. Le probl\`{e}me de ces corrections est qu'une partie se trouve \^{e}tre des corrections de contenu, une autre \'{e}tant des reformulations, et bien d'autres types de corrections n'\'{e}tant pas des erreurs de fran\c{c}ais mais sont pourtant contenues dans ces fichiers. La probl\'{e}matique de l'\'{e}puration de cette \'{e}norme masse de donn\'{e}es se pose donc.
+\newline
+\newline
+Face \`{a} ce probl\`{e}me, le groupe d'\'{e}tudiants de L3 avait mis en place un script Python qui prenait un fichier XML en entr\'{e}e et produisait un fichier CSV en sortie. Le script s'occupait aussi de la suppression de certains cas : les retours en arri\`{e}re. Il ne retenait donc pas les cas qui \'{e}taient des retours sur correction, c'est-\`{a}-dire lorsque le correcteur transformait une phrase A en phrase B, puis transformait \`{a} nouveau la phrase B en phrase A.
+\newline
+\newline
+C'est donc en reprenant cette base de travail que nous avons d\'{e}but\'{e} notre projet, dans l'optique de pouvoir \'{e}purer cette \'{e}norme masse de donn\'{e}es \`{a} l'aide de filtres pour obtenir uniquement des cas de corrections de langue.
+
+
+
+
+%===== 3eme sous partie ====
+\subsection{Mise en place du projet}
+Pour mettre en place notre projet, nous avons donc grandement utilis\'{e} le travail d\'{e}j\`{a} effectu\'{e} par nos coll\`{e}gues qui nous ont pr\'{e}c\'{e}d\'{e}s. Nous avons d\'{e}cid\'{e} d'utiliser l'\'{e}norme quantit\'{e} de cas que nous fournissait les fichiers XML de WiCoPaCo pour cr\'{e}er notre base de cas. Ces fichiers regroupant plus de 400 000 cas, elle serait suffisamment cons\'{e}quente pour couvrir un grand nombre d'erreurs de fran\c{c}ais. N\'{e}anmoins, comme cela a \'{e}t\'{e} expliqu\'{e} ci-dessus, nous ne pouvons pas seulement transformer ces fichiers directement en une base de cas car un grand nombre de cas n'est pas exploitable. Nous devons donc reprendre le travail qui a \'{e}t\'{e} fait en amont et continuer \`{a} filtrer les cas jusqu'\`{a} obtenir un ensemble de cas corrects.
+\newline
+\newline
+\`{A} la suite d'une r\'{e}flexion sur le d\'{e}veloppement de notre projet, nous avons d\'{e}cid\'{e} de ne pas reprendre les travaux effectu\'{e}s par les \'{e}tudiants pr\'{e}c\'{e}dent pour plusieurs raisons : premi\`{e}rement, bien que nous comprenions l'id\'{e}e directrice du d\'{e}veloppement, nous n'avions pas toutes les subtilit\'{e}s pour comprendre parfaitement le code. De plus, nous avions dans l'optique d'impl\'{e}menter plusieurs filtres afin de rendre la cr\'{e}ation de ceux-ci plus facile. Nous nous sommes donc r\'{e}solus \`{a} utiliser le langage orient\'{e} objet Java pour le d\'{e}veloppement de notre application. C'est un langage que nous avons eu l'habitude d'utiliser au cours de nos \'{e}tudes. Il permet de lire et d'\'{e}crire des fichiers ais\'{e}ment et permet, une fois le projet structur\'{e}, une impl\'{e}mentation simple et rapide de nouvelles fonctionnalit\'{e}s.
+\newline
+\newline
+Cependant, notre projet consistant \`{a} trouver la correction d'une phrase de fran\c{c}ais en utilisant une base de cas, nous n'avons par cons\'{e}quent pas acc\`{e}s \`{a} un analyseur syntaxique ou orthographique pour pouvoir d\'{e}tecter si une phrase contient des erreurs. Nos encadrants nous ont demand\'{e}s de r\'{e}fl\'{e}chir \`{a} une m\'{e}thode permettant d'effectuer cette d\'{e}tection.
+
+
+%===== 2eme partie ====
+\section{Conception et d\'{e}veloppement}
+
+%===== 1ere sous partie ====
+\subsection{D\'{e}but du d\'{e}veloppement}
+Suite \`{a} la mise en place de notre sujet, nous nous sommes donc concentr\'{e}s sur deux axes principaux : la d\'{e}couverte d'un outil permettant la d\'{e}tection d'erreurs dans une phrase et le d\'{e}but du d\'{e}veloppement de notre projet en Java.
+
+%===== 1ere sous sous partie ====
+\subsubsection{Grew}
+Le premier de nos deux axes \'{e}tait la d\'{e}couverte d'un outil permettant l'analyse des phrases pour en trouver les potentielles fautes de fran\c{c}ais. Pour cela, nos encadrants nous ont orient\'{e}s vers GREW \autocite[3]{http://grew.fr}, un logiciel dont un de nos encadrants, Bruno Guillaume, conna\^{i}t bien le fonctionnement. Ce logiciel permet, \`{a} partir d'une ou plusieurs phrases donn\'{e}es en param\`{e}tre, de construire un graphe \`{a} partir des lemmes de chaque mot ainsi que gr\^{a}ce au contexte des phrases. Ce graphe permet de d\'{e}duire les liens que chaque mot entretient avec les autres mots de la phrase. Voici un exemple de graphe que cr\'{e}e l'outil GREW \`{a} partir de la phrase <<\,C'est une femme tr\`{e}s intelligente.\,>>
+
+%==== image ====
+\begin{center}
+\includegraphics[width=10cm]{graphgrew.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Nous pouvons donc retrouver dans ce graphe le lemme de chaque mot, situ\'{e} sous le mot correspondant ainsi que les liens qu'il a avec les autres, repr\'{e}sent\'{e}s par des fl\`{e}ches qui lient les mots entre eux. Cet outil n'est donc pas un outil de d\'{e}tection d'erreurs \`{a} proprement parl\'{e}. Cependant il permet, si une phrase n'est pas bien assembl\'{e}e ou dans les cas o\`{u} il n'arrive pas \`{a} trouver les liens entre les mots d'une phrase, de cr\'{e}er des graphes o\`{u} tous les mots ne sont pas li\'{e}s entre eux. Prenons par exemple la phrase utilis\'{e}e dans le graphe pr\'{e}c\'{e}dent et rempla\c{c}ons le mot <<\,C'est\,>> par <<\,S'est\,>>, ce qui est une erreur classique de fran\c{c}ais. Dans ce cas, GREW r\'{e}alise le graphe suivant :
+
+%==== image ====
+\begin{center}
+\includegraphics[width=10cm]{imgGrew.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Nous voyons ici que GREW n'a pas r\'{e}ussi \`{a} lier le 'S' avec les autres mots. Nous dirons par la suite qu'un graphe dans lequel un ou plusieurs mots ne sont li\'{e}s \`{a} aucun autre est un graphe qui repr\'{e}sente une phrase comportant une ou plusieurs erreurs de fran\c{c}ais. Notre objectif est donc d'observer  les r\'{e}sultats de GREW sur des exemples multiples et vari\'{e}s, et d'analyser ses performances.
+\newline
+\newline
+Tout d'abord, nous avons d\^{u} installer GREW, ce qui fut complexe au vu des d\'{e}pendances de ce dernier. L'installation nous a permis d'utiliser l'outil en ligne de commande, puis par l'interm\'{e}diaire d'un script BASH, qui nous a permis d'automatiser son utilisation. L'objectif de ce script \'{e}tait de faire analyser un grand nombre de phrases par GREW, correctes ou incorrectes, et de v\'{e}rifier par le biais de fichier de sortie, le pourcentage de phrases bien analys\'{e}es par celui-ci. Pour se faire, nous avons regroup\'{e} les cas du fichier XML de WiCoPaCo dans un fichier CSV. Ces cas \'{e}taient repr\'{e}sent\'{e}s comme sur la capture d'\'{e}cran ci-dessous :
+
+%==== image ====
+\begin{center}
+\includegraphics[width=10cm]{exemple1.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Chaque cas est compos\'{e} de 3 \'{e}l\'{e}ments : une phrase fausse, une phrase corrig\'{e}e, ainsi qu'un commentaire expliquant la nature de la correction. Sur cette image, la premi\`{e}re ligne correspond \`{a} la phrase avec erreur, la deuxi\`{e}me correspond \`{a} la phrase corrig\'{e}e et la derni\`{e}re au commentaire.
+\newline
+\newline
+De plus, une \'{e}tudiante de l'\'{e}cole T\'{e}l\'{e}com Saint-\'{e}tienne, Mme Isabelle Mornard, est venue effectuer un stage au sein du Loria, sous l'encadrement de M. Guillaume, M. Lepage, M. Lieber et M. Nauer. Son objectif en tant que stagiaire \'{e}tait de nous aider \`{a} comprendre les diff\'{e}rentes erreurs possibles de la langue fran\c{c}aise ainsi que de les cat\'{e}goriser. En plus de cela, un de ses objectifs \'{e}tait de cr\'{e}er \`{a} la main une base d'environ 200 cas regroupant des erreurs de chaque cat\'{e}gorie. La base de cas a \'{e}t\'{e} remplie dans un fichier Python et chaque cas \'{e}tait repr\'{e}sent\'{e} comme ci-dessous :
+
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple2.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Un cas dans ce fichier est repr\'{e}sent\'{e} par 3 ou 4 lignes : la premi\`{e}re est une phrase avec une erreur, la deuxi\`{e}me est une phrase correcte, la troisi\`{e}me est l'explication de la correction et la derni\`{e}re ligne est la provenance de l'exemple. La provenance est souvent un site web de correction de fran\c{c}ais. Nous avons donc utilis\'{e} notre script sur la base de cas d'Isabelle ainsi que sur notre base de cas pour tester l'outil GREW. Les fichiers r\'{e}sultants de ces tests nous ont permis de mieux comprendre son fonctionnement ainsi que ses limites.
+\newline
+\newline
+
+\newcolumntype{M}[1]{>{\raggedright}m{#1}}
+%tableau
+\begin{center}
+\begin{tabular}{|M{4cm}|M{3cm}|M{3cm}|M{3cm}|M{3cm}|}
+   \hline
+    \, & \multicolumn{2}{|c|}{Base de cas d'Isabelle} & \multicolumn{2}{|c|}{Base de cas de WiCoPaCo} \tabularnewline
+   \hline
+    \, &Cas comportant des erreurs & Cas ne comportant pas d'erreur & Cas comportant des erreurs & Cas ne comportant pas d'erreur \tabularnewline
+   \hline
+    Nombre de cas rejet\'{e}s / nombre de cas & 101 / 202 & 53 / 202 & 279 / 500 & 273 / 500 \tabularnewline
+   \hline
+     Pourcentage de cas rejet\'{e}s & 50 \% & 26 \% & 56\% & 56\% \tabularnewline
+   \hline
+\end{tabular}
+\end{center}
+
+
+Les r\'{e}sultats que nous analysons dans les fichiers de sorties nous montrent que dans les cas contenant une erreur, le logiciel GREW d\'{e}tecte cette erreur une fois sur deux. Cependant, ces r\'{e}sultats nous montrent aussi que le logiciel d\'{e}tecte une erreur 40 \% du temps sur des cas ne comportant pas d'erreur. N\'{e}anmoins, nous avons r\'{e}ussi \`{a} trouver des sch\'{e}mas de phrases qui se r\'{e}p\`{e}tent et pour lesquelles le logiciel ne fonctionne pas correctement. Par exemple, tous les cas comportant des caract\`{e}res sp\'{e}ciaux tels que des accolades, des parenth\`{e}ses, des tirets, des point-virgule, des points d'interrogation, etc. sont des cas pour lesquels GREW n'arrive pas \`{a} cr\'{e}er un graphe complet correspondant et donc est consid\'{e}r\'{e} comme un cas contenant une faute m\^{e}me si ce n'est pas toujours le cas. A contrario, les cas contenant des erreurs de conjugaison sont des cas o\`{u} un graphe complet est parfois cr\'{e}\'{e} et donc consid\'{e}r\'{e} comme sans faute. Nous pouvons donc en conclure que le logiciel GREW n'est pas infaillible quant \`{a} la d\'{e}tection d'erreurs mais que des am\'{e}liorations peuvent \^{e}tre effectu\'{e}es sur les cas pour pouvoir obtenir de meilleurs r\'{e}sultats. Il est important de noter que GREW n'est pas un outil d\'{e}velopp\'{e} pour d\'{e}tecter les erreurs de fran\c{c}ais.
+
+
+%===== 2eme sous sous partie ====
+\subsubsection{WiCorrector}
+Notre second axe est la mise au point d'un outil simple permettant de traiter les donn\'{e}es des fichiers WiCoPaCo. Ces derniers se pr\'{e}sentant sous la forme suivante:
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple4.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Les balises:
+%==== image ====
+\begin{center}
+\includegraphics[width=7cm]{exemple5.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+ainsi que 
+
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple6.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+donnent des informations g\'{e}n\'{e}rales sur le document qui ne sont pas essentielles pour le traitement que nous d\'{e}sirons effectuer. 
+Puis, suit la balise:
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple7.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+qui contient le contenu qui nous int\'{e}resse puisque c'est elle qui contient le cas. le document se construit de la mani\`{e}re suivante:
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple8.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Donc chacune de ces balises pouvait potentiellement correspondre \`{a} un cas qui aurait pu s'ajouter \`{a} notre base de cas. Or, apr\`{e}s une \'{e}tude de ces fichiers nous avons observ\'{e} que chaque balise <modif> n'\'{e}tait pas forc\'{e}ment une correction de langue, c'est pourquoi il \'{e}tait n\'{e}cessaire d'effectuer un traitement sur les donn\'{e}es.
+\newline
+\newline
+Donc nous avons entrepris la conception d'un logiciel qui porte le nom de WiCorrector. Celui-ci prend en entr\'{e}e un fichier au format XML tir\'{e} du site WiCoPaCo, en extrait les cas puis les traite de sorte \`{a} enlever ceux qui ne constituent pas un cas int\'{e}ressant pour la cr\'{e}ation d'une base de cas. Enfin, il retourne les cas retenus dans un fichier au format facilement exploitable.
+\newline
+\newline
+Ce logiciel allait contenir plusieurs filtres pouvant \^{e}tre r\'{e}partis dans des cat\'{e}gories bien pr\'{e}cises, donc nous nous sommes tourn\'{e}s vers un langage orient\'{e} objet poss\'{e}dant des propri\'{e}t\'{e}s telles que l'h\'{e}ritage. Le langage Java semblait donc bien correspondre \`{a} nos besoins gr\^{a}ce \`{a} son polymorphisme de variables, de plus il est possible de trouver en ligne de nombreuses API pour l'exploitation de fichier XML.
+\newline
+\newline
+
+
+Apr\`{e}s r\'{e}flexion, nous avons donc d\'{e}cid\'{e} de mettre en place 3 cat\'{e}gories distinctes de filtres :
+\begin{itemize}
+\item Le <<\,globalRejector\,>> qui accepte ou rejette un cas en fonction de l'ensemble du fichier, c'est-\`{a}-dire en fonction des autres cas de ce m\^{e}me fichier.
+\item Le <<\,localRejector\,>> qui accepte ou rejette un cas en ne regardant que le cas lui m\^{e}me.
+\item Le <<\,Purifier\,>> qui va r\'{e}duire la taille du cas en supprimant le surplus de caract\`{e}res non essentiels.
+\end{itemize}
+Ces 3 types de filtres s'appliquent de mani\`{e}re cons\'{e}cutive par cat\'{e}gorie sur chaque cas extrait des fichiers WiCoPaCo. Une fois l'\'{e}puration effectu\'{e}e, le logiciel cr\'{e}e un fichier de sortie contenant les cas n'ayant pas \'{e}t\'{e} rejet\'{e}s. Concernant les donn\'{e}es de sorties du logiciel, nous avons d\'{e}cid\'{e} d'utiliser le format CSV afin de pouvoir facilement ins\'{e}rer son contenu dans une base de donn\'{e}es par la suite si besoin.
+
+%===== 2eme sous partie ====
+\subsection{R\'{e}flexions sur les fonctionnalit\'{e}s}
+Dans cette partie nous aborderons nos principales r\'{e}flexions qui ont orient\'{e} le d\'{e}veloppement du logiciel en Java.
+%===== 1ere sous sous partie ====
+\subsubsection{API pour la lecture de fichier}
+Comme les fichiers de WiCoPaCo sont au format XML, nous avons cherch\'{e} des API permettant une exploitation ais\'{e}e et pratique du contenu qu'ils renferment. Nous avons donc utilis\'{e} une API qui permet de repr\'{e}senter en m\'{e}moire le fichier XML en un objet en structure d'arbre. Chaque noeud de cet arbre est une balise, et les enfants de ce noeud correspondent aux balises que ce noeud contient (cf illustration suivante). 
+
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple9.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+	Cette API nous permet donc une facilit\'{e} de d\'{e}veloppement pour le parcours et l'exploitation des balises ainsi que leurs contenus.
+
+%===== 2eme sous sous partie ====
+\subsubsection{Protocole d'ajout de filtres}
+C'est ici que nous allons traiter le c{\oe}ur du sujet : la mani\`{e}re dont les filtres ont \'{e}t\'{e} con\c{c}us. Ces filtres \'{e}tant un point crucial dans l'obtention d'un r\'{e}sultat int\'{e}ressant pour notre recherche, il semblait plus que n\'{e}cessaire de mettre en place un protocole rigoureux pour la validation des filtres. Le protocole \'{e}tait assez simple, mais n'en demeurait pas moins efficace.
+\newline
+\newline
+Pour commencer, nous examinions le contenu du fichier WiCoPaCo dans le but de trouver plusieurs cas qui ne correspondaient pas \`{a} nos crit\`{e}res de s\'{e}lection. Une fois le cas relev\'{e}, il fallait l'analyser et comprendre pourquoi il ne concordait pas avec nos attentes, de sorte \`{a} trouver une r\`{e}gle nous permettant de d\'{e}tecter ce type de cas. Apr\`{e}s quoi, nous nous penchions sur la mani\`{e}re dont le filtre allait \^{e}tre impl\'{e}ment\'{e} en s'appuyant sur la r\`{e}gle que nous avions \'{e}labor\'{e}e.
+\newline
+\newline
+Ensuite, une fois le filtre d\'{e}velopp\'{e}, une multitude de tests devait \^{e}tre effectu\'{e}e afin de s'assurer que celui-ci \'{e}tait bien fonctionnel. Nous ex\'{e}cutions donc le filtre sur un extrait du fichier de WiCoPaCo contenant quelques centaines de cas, et nous observions ceux rejet\'{e}s. Si le filtre se comportait comme nous l'attendions sur cette base test de taille r\'{e}duite, nous consid\'{e}rions que le filtre \'{e}tait fonctionnel. Si le r\'{e}sultat se r\'{e}v\'{e}lait \^{e}tre imparfait, nous entreprenions un ajustement de la r\`{e}gle jusqu'\`{a} obtention du r\'{e}sultat escompt\'{e}. 
+\newline
+\newline
+Puis, une fois le filtre op\'{e}rationnel, une analyse statistique de son ex\'{e}cution, coupl\'{e}e avec les filtres d\'{e}j\`{a} existant, \'{e}tait effectu\'{e}e. Le but de la d\'{e}marche \'{e}tait de d\'{e}montrer l'utilit\'{e} de ce dernier malgr\'{e} l'existence d'autres filtres. Si les r\'{e}sultats statistiques attestaient de l'int\'{e}r\^{e}t du filtre, alors ce dernier \'{e}tait accept\'{e} et ajout\'{e} au projet.
+\newline
+\newline
+Enfin, nous appliquions tous les filtres sur les quelques 400 000 cas et entreprenions une nouvelle analyse sur le fichier de sortie du logiciel en qu\^{e}te de cas ne correspondant pas \`{a} nos crit\`{e}res pour recommencer le protocole. Le fonctionnement de chacun de ces filtres sera d\'{e}taill\'{e} plus bas (cf. partie 2.3).
+
+%===== 3eme sous sous partie ====
+\subsubsection{Fichier de sortie}
+Le logiciel, une fois les filtres appliqu\'{e}s sur un fichier pass\'{e} en entr\'{e}e, devait produire une sortie facilement exploitable. C'est pourquoi nous avons d\'{e}cid\'{e} d'utiliser le format CSV. C'est un format simple, exportable, lisible par un humain sous forme de tableau, et qui peut \^{e}tre ais\'{e}ment ins\'{e}r\'{e} dans une base de donn\'{e}es via un script si besoin en est. Chaque ligne correspond \`{a} un cas, et le fichier est compos\'{e} de trois colonnes : la premi\`{e}re correspond au cas avant que la correction soit effectu\'{e}e, la deuxi\`{e}me \'{e}tant le cas avec la correction, et la troisi\`{e}me colonne se trouve \^{e}tre l'\'{e}ventuel commentaire que l'auteur de la correction peut faire sur la correction qu'il effectue sur Wikipedia.
+Il est \'{e}galement possible d'activer la sortie pour chacun des filtres, chaque fichier de sortie porte le nom de <<\,RejectedBy\,>> concat\'{e}n\'{e} avec le nom du filtre et contient les cas rejet\'{e}s. Cela permet de voir ce que chaque filtre a effectu\'{e} lors de l'ex\'{e}cution.
+
+%===== 3eme sous partie ====
+\subsection{D\'{e}tail sur les diff\'{e}rents filtres}
+%===== 1ere sous sous partie ====
+\subsubsection{Le type GlobalRejector}
+Comme expliqu\'{e} de mani\`{e}re succincte plus haut, le type de filtre GlobalRejector est une cat\'{e}gorie contenant les filtres qui n\'{e}cessitent une analyse enti\`{e}re du document d'entr\'{e}e, pour y collecter des informations, afin de statuer sur l'acceptation d'un cas. 
+	Dans cette cat\'{e}gorie se trouvent deux filtres:
+Le premier \'{e}tant le <<\,RollbackFilter\,>>, qui a pour but de refuser les retours sur correction. Le filtre parcourt une premi\`{e}re fois enti\`{e}rement le fichier en r\'{e}pertoriant chaque correction, puis lors du parcours du document pour le traitement des cas, le filtre scrute ses donn\'{e}es pour voir si une modification inverse est effectu\'{e}e \`{a} un moment. S'il existe une modification inverse dans le document, alors le cas est rejet\'{e}.
+Voici un exemple que le RollbackFilter rejette :
+On trouve une premi\`{e}re modification comme suit,
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple10.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Puis, plus loin dans le document on trouve la correction inverse,
+
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple11.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Comme le fichier contient la correction <<\,agi\,>> en <<\,agit\,>>, puis <<\,agit\,>> en <<\,agi\,>> sur le m\^{e}me cas, le filtre rejette les deux corrections puisqu'il ne peut pas d\'{e}terminer laquelle de ces deux corrections est juste.
+
+%===== 2eme sous sous partie ====
+\subsubsection{Le type LocalRejector}
+Quant au type <<\,LocalRejector\,>>, c'est une cat\'{e}gorie comprenant des filtres qui inspectent uniquement le cas et son contenu pour d\'{e}cider si le cas est rejet\'{e}. Deux filtres ont \'{e}t\'{e} impl\'{e}ment\'{e}s dans cette cat\'{e}gorie :
+\newline
+Le premier porte le nom de <<\,EstheticalRestructurationRejector\,>> et a pour but de d\'{e}tecter les reformulations ou restructuration de phrases. Pour ce faire, notre filtre utilise la distance d'\'{e}dition de Levenshtein, qui au sens math\'{e}matique du terme, est une distance donnant une mesure de la diff\'{e}rence entre deux cha\^{i}nes de caract\`{e}res. Elle est \'{e}gale au nombre minimal de caract\`{e}res qu'il faut supprimer, ins\'{e}rer ou remplacer pour passer d'une cha\^{i}ne \`{a} l'autre. C'est pourquoi si cette distance est importante par rapport \`{a} la taille des mots modifi\'{e}s, nous pouvons consid\'{e}rer que le mot entier a \'{e}t\'{e} chang\'{e} et que ce n'\'{e}tait pas une simple correction orthographique. 
+\newline
+Notre filtre a \'{e}t\'{e} impl\'{e}ment\'{e} de la mani\`{e}re suivante, un cas est rejet\'{e} si :
+\begin{itemize}
+\item La longueur de la plus petite cha\^{i}ne de caract\`{e}res entre l'avant et l'apr\`{e}s correction est inf\'{e}rieure \`{a} 4 caract\`{e}res, et que la distance de Levenshtein est plus grande que la moiti\'{e} de la plus petite cha\^{i}ne.
+\end{itemize}
+Ou, si
+\begin{itemize}
+\item La longueur de la plus petite cha\^{i}ne de caract\`{e}res entre l'avant et l'apr\`{e}s correction est sup\'{e}rieure ou \'{e}gale \`{a} 4 caract\`{e}res, et que la distance calcul\'{e}e est plus grande qu'un tiers de la plus petite cha\^{i}ne.
+\end{itemize}
+ Le choix d'une telle impl\'{e}mentation r\'{e}sulte d'une premi\`{e}re r\'{e}flexion sur les possibles fautes qu'il est possible de faire, et plus pr\'{e}cisement sur le rapport entre la taille de la faute et la taille du mot en question. Puis cette r\'{e}flexion a \'{e}t\'{e} test\'{e}e de mani\`{e}re empirique sur 500 cas d'une base test, ou chaque cas rejet\'{e} ou accept\'{e} ont \'{e}t\'{e} analys\'{e} pour ajuster les param\`{e}tres du filtre (seulement quelques fautes de conjugaison sont filtr\'{e}s \`{a} tort).
+ Voici un exemple que le EstheticalRestructurationRejector rejette :
+
+%==== image ====
+\begin{center}
+\includegraphics[width=12cm]{exemple12.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+Le deuxi\`{e}me, <<\,NumberRejector\,>> \'{e}limine les corrections portant sur les chiffres, car ce sont des corrections de contenu (date, pourcentage, ...) et donc, elles ne constituent pas d'erreurs de fran\c{c}ais. 
+Voici un exemple que le NumberRejector rejette :
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple13.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+%===== 3eme sous sous partie ====
+\subsubsection{Le type Purifier}
+En plus de ces deux filtres, nous avons ajout\'{e} une autre cat\'{e}gorie, <<\,PurifierFilter\,>>, qui n'est pas un filtre en soit car il rejette aucun cas. Ce <<\,purificateur\,>> a deux principaux objectifs: premi\`{e}rement, il sert \`{a} <<\,\'{e}purer\,>> les cas qui seront retenus par les filtres pr\'{e}c\'{e}dent. Cette \'{e}puration permettra d'abord d'all\'{e}ger les donn\'{e}es contenues dans la base de cas, mais aussi d'am\'{e}liorer les \'{e}tapes de rem\'{e}moration ainsi que d'adaptation en enlevant des caract\`{e}res inutiles. De plus, nous avons vu pr\'{e}c\'{e}demment dans l'utilisation du logiciel GREW que celui-ci n'arrivait pas \`{a} construire de graphe complet lorsque le cas \'{e}tudi\'{e} comportait des caract\`{e}res sp\'{e}ciaux. Cette \'{e}puration permettra aussi d'am\'{e}liorer la qualit\'{e} d'analyse de GREW pour la d\'{e}tection d'erreurs.
+\newline
+\newline
+Dans cette cat\'{e}gorie, nous retrouvons deux filtres. Le premier filtre, <<\,SentencePurifier\,>> a pour mission de supprimer tout le contenu superflu autour de la correction, et de n'en garder que le noyau. Le probl\`{e}me \'{e}tant que les cas contenus dans le fichier de WiCoPaCo sont souvent entour\'{e}s du contexte, qui n'est pas important pour l'utilisation que nous voulons en faire. C'est pourquoi nous avons d\'{e}cid\'{e} de supprimer le contexte, dans l'optique d'all\'{e}ger le fichier de sortie
+Par exemple le cas : 
+
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple14.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+va se transformer par l'application du filtre SentencePurifier en : 
+%==== image ====
+\begin{center}
+\includegraphics[width=14cm]{exemple15.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+Enfin, le filtre SpecialCaracterPurifier, est assez simple. Il consiste \`{a} supprimer les caract\`{e}res sp\'{e}ciaux suivant: <<\,\$\,>>, <<\,*\,>>, <<\,/\,>>, <<\,\#\,>>, se trouvant au d\'{e}but de la premi\`{e}re phrase des cas. Les corrections pouvant \^{e}tre effectu\'{e}es sur tout le contenu de la page, certains cas sont des annotations en pied de page et ont donc une mise en forme particuli\`{e}re.
+Ce filtre n'a d'int\'{e}r\^{e}t que s'il est appliqu\'{e} apr\`{e}s le filtre <<\,SentencePurifier\,>>, car il risquerait d'effectuer le m\^{e}me travail
+
+
+%===== 4eme sous sous partie ====
+\subsubsection{Travail effectu\'{e} par LIMSI}
+
+Gr\^{a}ce \`{a} nos recherches effectu\'{e}es sur WiCoPaCo, nous avons pu trouver des travaux[\cite[1]{1}] effectu\'{e}s par des chercheurs du LIMSI \autocite[4]{https://www.limsi.fr/fr/}. Ces travaux leurs ont permis d'extraire automatiquement des fichiers XML de WiCoPaCo un corpus d'erreurs compos\'{e} de 72 483 erreurs lexicales et 74 100 erreurs grammaticales. Leurs r\'{e}sultats peuvent \^{e}tre extraits 
+\`{a} partir d'un fichier XML regroupant les 150 000 cas, pr\'{e}sent\'{e} sous la forme :
+
+%==== image ====
+\begin{center}
+\includegraphics[width=7cm]{exemple16.png} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{center}
+
+Chaque cas est repr\'{e}sent\'{e} par un identifiant <<\,id\,>>, correspondant \`{a} l'identifiant du cas dans le fichier XML de WiCoPaCo. De plus, une \'{e}tiquette est associ\'{e}e afin de pr\'{e}ciser si ce cas est une erreur lexicale (non-word errors) ou grammaticale (real-word errors). Nous avons donc associ\'{e} leurs travaux aux n\^{o}tres en cr\'{e}ant un filtre s'intitulant <<\,SpellingErrorLabel\,>>, bien qu'il ne soit pas \`{a} proprement dit un filtre car il peut uniquement s'appliquer sur la base de cas de WiCoPaCo. Ce filtre permet de ne garder que les cas dont l'identifiant est inscrit dans le fichier r\'{e}sultant des travaux de LIMSI.
+\newline
+\newline
+Cependant, leur fichier repr\'{e}sente quelques probl\`{e}mes : premi\`{e}rement, leur fichier de r\'{e}sultats est un travail obtenu \`{a} partir de l'analyse du fichier de WiCoPaCo. Ce fichier sera donc utile seulement si nous analysons les cas de WICoPaCo, mais sera inutile si nous prenons une autre base de cas \`{a} analyser. Deuxi\`{e}mement, leur travail est muni d'un document expliquant leur d\'{e}veloppement mais celui-ci n'est pas tr\`{e}s explicite quant \`{a} la nature de leurs filtres. Nous ne pouvons donc pas assurer que leur travail ne supprime pas de cas qui nous seraient utiles. Nous nous questionnons donc sur l'utilit\'{e} de ce filtre pour notre projet.
+\newline
+\newline
+
+%===== 3ere partie ====
+\section{R\'{e}sultats}
+
+Dans cette derni\`{e}re partie, nous allons donc vous montrez les r\'{e}sultats que nous avons obtenus suite au d\'{e}veloppement de WiCorrector. Nous aborderons aussi les probl\`{e}mes que nous avons rencontr\'{e}s au cours de cette initiation \`{a} la recherche ainsi que les possibles suites qui peuvent \^{e}tre donn\'{e}es \`{a} nos travaux.
+
+%===== 1ere sous partie ====
+\subsection{Statistiques}
+
+%===== 1ere sous sous partie ====
+\subsubsection{Ex\'{e}cution individuelle des filtres}
+Dans cette partie nous donnerons les r\'{e}sultats de chacun de nos filtres en ex\'{e}cution seule sur le fichier de WiCoPaCo complet.
+\newline
+\newline
+{\bfseries Cat\'{e}gorie de filtres rejetant des cas :}
+
+%tableau
+\begin{center}
+\begin{tabular}{|M{4cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de cas rejet\'{e}s / nombre de cas trait\'{e}s & Pourcentage de cas rejet\'{e}s \tabularnewline
+   \hline
+    Filtre RollbackFilter & 154 449 / 408 816 & 37,7\% \tabularnewline
+   \hline
+    Filtre EstheticalRestructurationRejector & 145 141 / 408 816 & 35,5\% \tabularnewline
+   \hline
+      Filtre NumberRejector & 47 194 / 408 816 & 11,5\% \tabularnewline
+   \hline
+\end{tabular}
+\end{center}
+
+Notez que l'ex\'{e}cution de chaque filtre ne prend pas plus de quelques minutes \`{a} se faire sur tout le fichier (en dehors du RollbackFiltrer qui prend plusieurs dizaines de minutes \`{a} cause sa complexit\'{e} algorithmique).
+\newline
+\newline
+{\bfseries Cat\'{e}gorie de filtres supprimant le contenu superflu d'un cas :}
+
+%tableau
+\begin{center}
+\begin{tabular}{|M{4cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de caract\`{e}res supprim\'{e}s / nombre de caract\`{e}res trait\'{e}s & Pourcentage de caract\`{e}res supprim\'{e}s \tabularnewline
+   \hline
+    Filtre SentencePurifier & 28 740 736 / 119 554 961 & 24\% \tabularnewline
+   \hline
+\end{tabular}
+\end{center}
+
+
+%tableau
+\begin{center}
+\begin{tabular}{|M{4cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de caract\`{e}res supprim\'{e}s / nombre de phrases trait\'{e}es & Pourcentage de caract\`{e}res supprim\'{e}s par phrase\tabularnewline
+   \hline
+    Filtre SpecialCaracterPurifier & 191 163 / 817 632 & 23,3\% \tabularnewline
+   \hline
+\end{tabular}
+\end{center}
+
+Quant aux filtres <<\,Purifier\,>>, leurs ex\'{e}cutions ne d\'{e}passent pas quelques dizaines de secondes.
+
+
+
+%===== 2eme sous sous partie ====
+\subsubsection{Superposition et commutativit\'{e} des filtres}
+Il est int\'{e}ressant de voir si l'ordre d'application des filtres a une incidence sur le fichier de sortie. Cela permet de s'assurer que les filtres, entre eux, ne s'entravent pas dans l'ex\'{e}cution de leurs fonctions. 
+Nous allons donc ex\'{e}cuter les filtres rejetant des cas dans des ordres diff\'{e}rents sur le fichier complet.
+\newline
+\newline
+Ci-dessous se trouve le tableau des r\'{e}sultats de l'ex\'{e}cution la cat\'{e}gorie de filtres <<\,GlobalRejector\,>>, puis la cat\'{e}gorie de filtres <<\,LocalRejector\,>> sur le fichier WiCoPaCo complet. Les filtres ont \'{e}t\'{e} appliqu\'{e}s dans le m\^{e}me ordre que celui d'apparition dans le tableau.
+%tableau global puis local
+\begin{center}
+\begin{tabular}{|M{6cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de cas rejet\'{e}s / nombre de cas trait\'{e}s & Pourcentage de cas rejet\'{e}s \tabularnewline
+   \hline
+    Filtre RollbackFilter & 154 450 / 408 816 & 37,7\% \tabularnewline
+   \hline
+    Filtre NumberRejector & 27 269 / 254 366 & 10,7\% \tabularnewline
+\hline
+Filtre EstheticalRestructurationRejector & 99 319 / 227 097 & 43,7\% \tabularnewline
+\hline
+\end{tabular}
+\end{center}
+Nous obtenons donc un fichier de sortie comportant 127 779 cas.
+\newline
+NB : Dans cette configuration, l'ex\'{e}cution compl\`{e}te a dur\'{e} une quarantaine de minutes sur une de nos machines.
+\newline
+\newline
+Ci-dessous se trouve le tableau des r\'{e}sultats de l'ex\'{e}cution la cat\'{e}gorie de filtres <<\,LocalRejector\,>>,  puis la cat\'{e}gorie de filtres <<\,GlobalRejector\,>> sur le fichier WiCoPaCo complet. Les filtres ont \'{e}t\'{e} appliqu\'{e}s dans le m\^{e}me ordre que celui d'apparition dans le tableau
+%tableau local puis global
+\begin{center}
+\begin{tabular}{|M{6cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de cas rejet\'{e}s / nombre de cas trait\'{e}s & Pourcentage de cas rejet\'{e}s \tabularnewline
+   \hline
+    Filtre NumberRejector & 47 194 / 408 816 & 11,5\% \tabularnewline
+\hline
+Filtre EstheticalRestructurationRejector & 148 485 / 361 622 & 41\% \tabularnewline
+ \hline
+    Filtre RollbackFilter & 85 358 / 213 138 & 40\% \tabularnewline
+\hline
+\end{tabular}
+\end{center}
+Nous obtenons donc un fichier de sortie comportant 127 779 cas.
+\newline
+NB : Dans cette configuration, l'ex\'{e}cution compl\`{e}te a dur\'{e} une douzaine de minutes sur une de nos machines.
+\newline
+\newline
+
+Apr\`{e}s comparaison des deux fichiers de sorties, nous avons constat\'{e} qu'ils \'{e}taient identiques en nombre de cas, mais aussi en contenu. Comme les fichiers r\'{e}sultant des diff\'{e}rentes ex\'{e}cutions sont identiques, nous pouvons supposer que les filtres sont commutatifs.
+Cela se d\'{e}montre assez facilement puisque les filtres que nous avons impl\'{e}ment\'{e}s ne traitent que le contenu de la balise encadrant la partie corrig\'{e}e (la balise <\,m\,>), et ce de la m\^{e}me mani\`{e}re que ce soit avant (la balise <\,before\,>)ou apr\`{e}s la correction (balise <\,after\,>). Donc on peut dire que l'ordre dans lequel les filtres sont appliqu\'{e}s a peu d'importance, si ce n'est le temps d'ex\'{e}cution du logiciel (environ trois fois plus rapide dans une configuration que dans l'autre).
+
+
+%===== 3eme sous sous partie ====
+\subsubsection{Comparaison travaux LIMSI}
+Comme nous l'avions \'{e}voqu\'{e} pr\'{e}c\'{e}demment, des travaux avaient d\'{e}j\`{a} \'{e}t\'{e} r\'{e}alis\'{e}s par des chercheurs sur les fichiers de WiCoPaCo (cf. partie 2.3.4). Nous allons donc, dans cette partie, croiser leurs travaux avec les n\^{o}tres, et analyser les r\'{e}sultats que l'on obtient.
+
+Ci-dessous se trouve un tableau r\'{e}sumant la s\'{e}lection que les chercheurs du LIMSI ont effectu\'{e}s sur le fichier en question.
+%tableau travaux LIMSI seuls
+\begin{center}
+\begin{tabular}{|M{4cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de cas rejet\'{e}s / nombre de cas trait\'{e}s & Pourcentage de cas rejet\'{e}s \tabularnewline
+   \hline
+    Filtre SpellingErrorLabelFilter & 269 943 / 408 816 & 66\% \tabularnewline
+   \hline
+\end{tabular}
+\end{center}
+Il en r\'{e}sulte donc un fichier de 138 873 cas, et l'ex\'{e}cution n'a dur\'{e} qu'une dizaine de secondes.
+\newline
+\newline
+Dans un premier temps, nous allons appliquer les travaux des chercheurs du LIMSI, puis nous utiliserons nos filtres sur le fichier complet de WiCoPaCo.
+Voici ci-dessous les r\'{e}sultats de l'ex\'{e}cution.
+
+%tableau LIMSI puis nous
+\begin{center}
+\begin{tabular}{|M{6cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de cas rejet\'{e}s / nombre de cas trait\'{e}s & Pourcentage de cas rejet\'{e}s \tabularnewline
+    \hline
+    Filtre SpellingErrorLabelFilter & 269 943 / 408 816 & 66\% \tabularnewline
+   \hline
+       Filtre RollbackFilter & 46 623 / 138 873 & 33,5\% \tabularnewline
+ \hline
+    Filtre NumberRejector & 0 / 92 250 & 0\% \tabularnewline
+\hline
+Filtre EstheticalRestructurationRejector & 2 113 / 92 250 & 2,3\% \tabularnewline
+\hline
+\end{tabular}
+\end{center}
+
+Il en r\'{e}sulte un fichier de 90 137 cas, et on s'aper\c{c}oit que le filtre <<\,NumberRejector\,>> n'a plus d'effet sur la suppression de cas. On peut donc supposer que les chercheurs du LIMSI ont d\'{e}j\`{a} effectu\'{e} ce filtrage.
+\newline
+\newline
+Nous allons maintenant effectuer notre filtrage, puis le leur.
+Les r\'{e}sultats de l'ex\'{e}cution se trouvent dans le tableau ci-dessous.
+
+%tableau nous puis LIMSI
+\begin{center}
+\begin{tabular}{|M{6cm}|M{5cm}|M{6cm}|}
+   \hline
+    \, &Nombre de cas rejet\'{e}s / nombre de cas trait\'{e}s & Pourcentage de cas rejet\'{e}s \tabularnewline
+    \hline
+     Filtre NumberRejector & 47 194 / 408 816 & 11,5\% \tabularnewline
+\hline
+Filtre EstheticalRestructurationRejector & 148 485 / 361 621 & 41\% \tabularnewline
+\hline
+Filtre RollbackFilter & 85 358 / 213 137 & 40\% \tabularnewline
+ \hline
+    Filtre SpellingErrorLabelFilter & 57 551 / 127 779 & 45\% \tabularnewline
+   \hline
+   \end{tabular}
+\end{center}
+Il en r\'{e}sulte un fichier de 70 228 cas.
+\newline
+On constate qu'ici, l'ordre des filtres a son importance et nous pouvons \'{e}mettre l'hypoth\`{e}se que cela provient du RollbackFilter, puisque si la s\'{e}lection effectu\'{e}e par l'\'{e}quipe de chercheurs du LIMSI enl\`{e}ve un cas A qui devient B, mais ne retire pas le cas o\`{u} B redevient A, alors notre filtre ne pourra pas d\'{e}tecter le retour sur correction.
+Donc, il est crucial de noter que l'ordre de filtrage a son importance car les deux filtrages ne sont pas commutatifs, mais \'{e}galement que nos travaux permettent une \'{e}puration additionnelle \`{a} leur s\'{e}lection.
+
+
+%===== 2eme sous partie ====
+\subsection{Analyse des r\'{e}sultats}
+Dans cette partie nous allons pr\'{e}senter les r\'{e}sultats finaux de nos d\'{e}veloppements. Notre sujet consistait \`{a} obtenir une base de cas correcte en appliquant des filtres sur une base de donn\'{e}es bruit\'{e}e. Ces filtres permettraient donc de nettoyer cette base de cas.
+\newline
+\newline
+	La base de cas bruit\'{e}e choisie a \'{e}t\'{e} WiCoPaCo, sur laquelle nous avons appliqu\'{e} des filtres pour l'\'{e}purer. Apr\`{e}s le d\'{e}veloppement de plusieurs filtres ainsi qu'avec l'aide d'une \'{e}tude faite sur cette m\^{e}me base de cas, nous avons effectu\'{e} une s\'{e}rie de tests pour regarder l'efficacit\'{e} et la commutativit\'{e} des filtres et nous en avons d\'{e}duit la meilleure ex\'{e}cution possible. D'apr\`{e}s les tests effectu\'{e}s ci-dessus, nous arrivons \`{a} la conclusion que le meilleur ordonnancement de filtres est le suivant : 
+\newline
+\newline
+Premi\`{e}rement, nous devons  ex\'{e}cuter nos filtres de la cat\'{e}gorie <<\,LocalRejector\,>> puis nos filtres\newline<<\,GlobalRejector\,>>. Cet ordre importe peu en ce qui concerne la qualit\'{e} des cas enlev\'{e}s mais permet de gagner du temps lors de l'ex\'{e}cution de notre programme. Deuxi\`{e}mement, nous devons lancer le filtre cr\'{e}\'{e} \`{a} partir du travail des chercheurs de LIMSI. Nous appliquons ce filtre apr\`{e}s les n\^{o}tres et non avant car le travail effectu\'{e} par le groupe du LIMSI supprime des cas dont nos filtres ont besoin pour effectuer correctement leur t\^{a}che.
+\newline
+\newline
+En suivant cet ordre, nous arrivons \`{a} enlever 338 588 cas, soit \`{a} peu pr\`{e}s 82,82\% des cas. Bien que 4 cas sur 5 soient enlev\'{e}s de la base de cas, il reste tout de m\^{e}me 70 228 cas, ce qui est largement suffisant pour cr\'{e}er une base de cas. Cependant, l'utilisation du travail effectu\'{e} par les chercheurs de LIMSI n'est pas appropri\'{e} \`{a} notre travail de recherche, qui consiste \`{a} cr\'{e}er des outils permettant de nettoyer une base de cas bruit\'{e}e. Dans le cas ou une base de cas autre que WiCoPaCo serait utilis\'{e}, leur travail n'apporterait aucune information. 
+\newline
+\newline
+En l'enlevant de notre processus, et en ne gardant que les filtres cr\'{e}\'{e}s par nos soins, nous enlevons 281 037 cas, soit environ 68,74\% des cas. Le pourcentage de cas enlev\'{e}s est donc moindre quant \`{a} la pr\'{e}c\'{e}dente utilisation. Cependant,  nous pouvons esp\'{e}rer que l'utilisation de notre logiciel WiCorrector sur une base de cas bruit\'{e}e autre que WiCoPaCo permettra de supprimer une majorit\'{e} de cas erron\'{e}s.
+
+
+%===== 3eme sous partie ====
+\subsection{Le devenir de nos recherches}
+Au cours de cette recherche, nous nous sommes heurt\'{e}s \`{a} de nombreuses difficult\'{e}s comme la recherche et l'utilisation de travaux existants, la complexit\'{e} de la langue fran\c{c}aise face \`{a} la cat\'{e}gorisation des diff\'{e}rentes erreurs, ou encore la mise en place de certains filtres qui n\'{e}cessitaient un certain calibrage comme le filtre <<\,EstheticalRestructurationRejector\,>>.
+\newline
+\newline
+Cependant il reste beaucoup \`{a} faire, ne serait-ce que d'approfondir le filtrage des erreurs sur la base de cas de WiCoPaCo, et s'assurer qu'il ne reste plus d'erreur dans les cas r\'{e}sultants. Car malgr\'{e} les filtres d\'{e}velopp\'{e}s \`{a} l'aide de notre protocole, nous n'avons pas eu le temps de traiter l'enti\`{e}ret\'{e} du fichier de WiCoPaCo et donc de supprimer toutes les erreurs de celui-ci. Il reste donc d'autres filtres \`{a} impl\'{e}menter pour permettre \`{a} ce sujet de recherche d'atteindre sa finalit\'{e}. De plus, nous nous sommes uniquement int\'{e}ress\'{e}s aux fichiers du site WiCoPaCo qui f\^{u}t trouv\'{e} par les \'{e}tudiants nous ayant pr\'{e}c\'{e}d\'{e}s. Il existe donc peut \^{e}tre d'autres recueils de cas d'erreurs de fran\c{c}ais \`{a} \'{e}tudier. 
+\newline
+\newline
+Par ailleurs, il reste de nombreuses pistes que nous n'avons malheureusement pas eu le temps d'explorer, comme la cr\'{e}ation d'outils de collecte automatique, ou la mise en place de jeu interactif ayant pour but cach\'{e} de faire corriger des fautes au joueur. 
+\newline
+\newline
+Tous ces ustensiles pourraient se r\'{e}v\'{e}ler \^{e}tre plus qu'efficace dans la confection de cette base de cas qui est essentielle pour le bon fonctionnement du correcteur de fran\c{c}ais fonctionnant sur un syst\`{e}me de raisonnement \`{a} partir de cas.  
+
+\cleardoublepage
+%========Conclusion=======
+\begin{center}
+{\bfseries \huge Conclusion}
+\end{center}
+\vspace*{35mm}
+Pour conclure ce projet d'initiation \`{a} la recherche, nous rappelons que ce sujet fait suite \`{a} des travaux effectu\'{e}s par des \'{e}tudiants de L3 Informatique en 2017-2018. Ces derniers ayant pour but la construction d'une base de cas contenant des corrections de fran\c{c}ais. Ce projet \'{e}tait encadr\'{e} par les \'{e}quipes K et S\'{e}magramme du Loria, constitu\'{e}es de Bruno Guillaume, Yves Lepage, Jean Lieber et Emmanuel Nauer.
+\newline
+\newline
+	Au cours de ces 6 mois d'initiation \`{a} la recherche, nous avons \'{e}tudi\'{e} le raisonnement \`{a} partir de cas, analys\'{e} le corpus de correction d'erreurs de fran\c{c}ais de Wikip\'{e}dia, WiCoPaCo, ainsi que d\'{e}velopp\'{e} un logiciel Java, WiCorrector, qui permet l'\'{e}puration d'un corpus de correction de phrases de fran\c{c}ais. Toutes ces diff\'{e}rentes \'{e}tapes ont \'{e}t\'{e} tr\`{e}s enrichissantes, car elles nous ont donn\'{e}s la possibilit\'{e} d'en apprendre plus sur le secteur de la recherche. De plus, le fait de travailler dans un secteur jusqu'alors inconnu nous a permis d'apprendre de nouvelles techniques de travail telles que la recherche et l'utilisation de publication scientifique, ainsi que la r\'{e}daction d'une revue scientifique. Enfin, travailler sur un sujet de recherche nous a pouss\'{e} \`{a} acqu\'{e}rir de nouvelles connaissances, dans des domaines tels que le raisonnement \`{a} partir de cas, l'utilisation d'un syst\`{e}me de composition de documents, LaTeX, ainsi que la cr\'{e}ation de protocoles rigoureux, pour l'avancement de notre projet.
+\newline
+\newline
+	Cependant, nous sommes conscients que notre projet est loin d'\^{e}tre achev\'{e}, car il reste certainement des erreurs que nous n'avons pas encore trait\'{e}es. De plus, plusieurs aspects de notre sujet de recherche n'ont pas \'{e}t\'{e} abord\'{e}s tels que la cr\'{e}ation d'un jeu permettant la correction d'erreurs de fran\c{c}ais par les utilisateurs, ou l'analyse de corpus contenant des erreurs de fran\c{c}ais autre que WiCoPaCo. De nombreuses questions restent donc en suspens, elles pourront \'{e}ventuellement \^{e}tre \'{e}claircies par de prochains chercheurs qui travailleront sur ce sujet. Aussi, chaque nouvelle correction au sein de l'encyclop\'{e}die Wikip\'{e}dia ou chaque cr\'{e}ation de corpus d'erreurs de fran\c{c}ais pourrait \^{e}tre un tremplin vers la r\'{e}solution de notre sujet de recherche.
+
+
+\cleardoublepage
+
+%======biblio======
+\begin{center}
+{\bfseries \huge Bibliographie}
+\end{center}
+\vspace*{35mm}
+[1] Thierry Lecroq (Univ. Rouen). Distance entre mots 2012
+\newline
+\newline
+[2] Andr\'{e} Giang, Rapport de stage sur Corrector 2018
+\newline
+\newline
+[3] Damien Levy, Rapport de stage sur Corrector 2018
+\newline
+\newline
+[4] Nam LY, Rapport de stage sur Corrector 2018
+\newline
+\newline
+[5] Guillaume Wisniewski, Aur\'{e}lien Max and Fran\c{c}ois Yvon, Recueil et analyse d'un corpus \'{e}cologique de corrections orthographiques extrait des r\'{e}visions de Wikip\'{e}dia, TALN 2010, Montr\'{e}al, Canada
+\newline
+\newline
+[6] Camille Dutrey, Houda Bouamor, Delphine Bernhard and Aur\'{e}lien Max, Typologie des modifications dans les r\'{e}visions de Wikip\'{e}dia, LIMSI Technical Report 2011-01
+\newline
+\newline
+
+\cleardoublepage
+
+
+
+
+
+%====== glossaire ======
+\begin{center}
+{\bfseries \huge Glossaire}
+\end{center}
+\vspace*{35mm}
+1 - LIMSI : Laboratoire lorrain de recherche en informatique et ses applications
+\newline
+\newline
+2 - WiCoPaCo : Wikipedia Correction and Paraphrase Corpus
+\newline
+\newline
+3 - GREW : Graph Rewriting for Natural Language Processing
+\newline
+\newline
+4 - LIMSI : Laboratoire d'informatique pour la m\'{e}canique et les sciences de l'ing\'{e}nieur
+\newline
+\newline
+\cleardoublepage
+
+
+
+
+
+
+\cleardoublepage
+%==== non plagiat ====
+\begin{flushleft}
+\includegraphics[width=6cm]{UL_LOGO.jpg} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{flushleft}
+
+\vspace*{15mm}
+\begin{center}
+	{\bfseries \huge D\'{e}claration sur l'honneur contre le plagiat}
+\end{center}
+\vspace*{30mm}
+Je soussign\'{e}(e) Klein Christopher
+\newline
+R\'{e}guli\`{e}rement inscrit \`{a} l'Universit\'{e} de Lorraine
+\newline
+Num de carte d'\'{e}tudiant : 31520124
+\newline
+Ann\'{e}e universitaire : 2018-2019
+\newline
+Niveau d'\'{e}tudes : M1
+\newline
+Parcours : Informatique
+\newline
+Num UE : 811
+\newline
+\newline
+Certifie qu'il s'agit d'un travail original et que toutes les sources utilis\'{e}es ont \'{e}t\'{e} indiqu\'{e}es dans leur totalit\'{e}. Je certifie, de surcro\^{i}t, que je n'ai ni recopi\'{e} ni utilis\'{e} des id\'{e}es ou des formulations tir\'{e}es d'un ouvrage, article ou m\'{e}moire, en version imprim\'{e}e ou \'{e}lectronique, sans mentionner pr\'{e}cis\'{e}ment leur origine et que les citations int\'{e}grales sont signal\'{e}es entre guillemets.
+\newline
+\newline
+Conform\'{e}ment \`{a} la loi, le non-respect de ces dispositions me rend passible de poursuites devant la commission disciplinaire et les tribunaux de la R\'{e}publique Fran\c{c}aise.
+\vspace*{20mm}
+\begin{flushright}
+Fait \`{a}  Nancy , le 13/05/2019
+\end{flushright}
+\vspace*{5mm}
+\begin{flushright}
+ Signature :  \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,
+\end{flushright}
+
+\cleardoublepage
+%==== non plagiat ====
+\begin{flushleft}
+\includegraphics[width=6cm]{UL_LOGO.jpg} %l'image est retaill\'ee pour avoir une largeur de 10cm
+\end{flushleft}
+
+\vspace*{15mm}
+\begin{center}
+	{\bfseries \huge D\'{e}claration sur l'honneur contre le plagiat}
+\end{center}
+\vspace*{30mm}
+Je soussign\'{e}(e) Ginestra Alex
+\newline
+R\'{e}guli\`{e}rement inscrit \`{a} l'Universit\'{e} de Lorraine
+\newline
+Num de carte d'\'{e}tudiant : 31500632
+\newline
+Ann\'{e}e universitaire : 2018-2019
+\newline
+Niveau d'\'{e}tudes : M1
+\newline
+Parcours : Informatique
+\newline
+Num UE : 811
+\newline
+\newline
+Certifie qu'il s'agit d'un travail original et que toutes les sources utilis\'{e}es ont \'{e}t\'{e} indiqu\'{e}es dans leur totalit\'{e}. Je certifie, de surcro\^{i}t, que je n'ai ni recopi\'{e} ni utilis\'{e} des id\'{e}es ou des formulations tir\'{e}es d'un ouvrage, article ou m\'{e}moire, en version imprim\'{e}e ou \'{e}lectronique, sans mentionner pr\'{e}cis\'{e}ment leur origine et que les citations int\'{e}grales sont signal\'{e}es entre guillemets.
+\newline
+\newline
+Conform\'{e}ment \`{a} la loi, le non-respect de ces dispositions me rend passible de poursuites devant la commission disciplinaire et les tribunaux de la R\'{e}publique Fran\c{c}aise.
+\vspace*{20mm}
+\begin{flushright}
+Fait \`{a}  Nancy , le 13/05/2019
+\end{flushright}
+\vspace*{5mm}
+\begin{flushright}
+ Signature :  \,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,\,
+\end{flushright}
+
+
+\cleardoublepage
+\newpage
+\strut
+\thispagestyle{empty}
+\newpage
+
+%====== resume ======
+\begin{center}
+{\bfseries \huge R\'{e}sum\'{e}}
+\end{center}
+\vspace*{35mm}
+Depuis quelques ann\'{e}es, un nouveau syst\`{e}me de raisonnement a vu le jour : le raisonnement \`{a} partir de cas. Ce type de raisonnement r\'{e}sout des probl\`{e}mes en retrouvant des cas analogues dans sa base de connaissances et en les adaptant au cas consid\'{e}r\'{e}. Ce syst\`{e}me a donc vu le jour gr\^{a}ce \`{a} l'\'{e}norme masse de donn\'{e}es que nous pouvons trouver sur l'Internet. Gr\^{a}ce \`{a} celui-ci, nous pouvons donc cr\'{e}er une alternative aux r\'{e}solutions de probl\`{e}mes : solutionner des probl\`{e}mes qui n'avaient jamais \'{e}t\'{e} r\'{e}solus auparavant. Notre sujet de recherche porte sur la cr\'{e}ation d'un syst\`{e}me permettant la correction d'erreur de fran\c{c}ais \`{a} l'aide du raisonnement \`{a} partir de cas. Plus pr\'{e}cis\'{e}ment, notre but \'{e}tait la cr\'{e}ation d'une base de cas gr\^{a}ce \`{a} laquelle nous pourrions corriger n'importe quelle erreur de fran\c{c}ais. De plus, au vu du nombre d'erreurs possibles en fran\c{c}ais, la cr\'{e}ation de cette base de cas \`{a} la main \'{e}tait donc impossible. Notre but \'{e}tait donc de cr\'{e}er une base de cas qui se remplie semi-automatiquement \`{a} l'aide d'outils ext\'{e}rieurs. L'outil en question fut WiCoPaCo, un recueil de d'erreurs et leurs corrections de fran\c{c}ais r\'{e}cup\'{e}r\'{e} depuis l'encyclop\'{e}die Wikip\'{e}dia. Cependant, parmi les 400 000 couples d'erreurs / corrections que contenaient le recueil, un grand nombre \'{e}taient inutilisables. Notre probl\'{e}matique \'{e}tait donc l'\'{e}puration de celui-ci. Pour r\'{e}aliser un tel objectif, la d\'{e}marche scientifique ainsi que l'entente de groupe \'{e}taient primordiale. A l'aide de travaux d\'{e}j\`{a} effectu\'{e}s sur l'\'{e}puration d'une base de cas ainsi que sur les diverses m\'{e}thodes de filtrage possible, nous avons con\c{c}u un logiciel, d\'{e}velopp\'{e} en Java ainsi qu'un protocole de cr\'{e}ation de filtre nous permettant d'enlever au fur et \`{a} mesure l'enti\`{e}ret\'{e} des cas inutile ou superflus. 
+\newline
+\newline
+A new reasoning system just be created a few years ago: the case-based reasoning. This kind of reasoning can solves any problem by finding a similar problem solved in his cases base, and adapting it for the initial problem. This system was not created earlier because Internet provides big data in free self-service very recently. So now, we can find some new ways to solve problems that had no solution in the past. Our search subject was linked to a creation of this kind of system which can correct a french mistake by using the case-based reasoning. More precisely, our subject was to create a case base that can be used to solves every french written mistake. Moreover, it was unthinkable to create manually a case base because of the uncountable number of mistakes that can be made. So, our goal was, with some tools, to generate this base case automatically (or almost). Here, the tool we used was WiCoPaCo, it is a website which store a file which contains a huge number of french written mistakes and their corrections. Even if the file contains about 400 000 couple of mistake/correction, not all of them was usable. That's why, we were in charge to filter this file. To reach that king of goal, an harsh scientific procedure and communication in the team was the key. Then, by using existing work and developing them, we create a Java software and invent a protocol to produce filter that can delete useless or shallow cases.
+
+\end{document}

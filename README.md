@@ -11,4 +11,4 @@ Ajout d'un nouveau filtre :
   - création d'une nouvelle classe filtre dans le package voulu
   
 Pour activer le filtre :
-  - c
+  - méthode main de la classe ParserXML (ligne 255, parser.addRejector(new filtre); )
